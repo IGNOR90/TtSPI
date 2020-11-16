@@ -1,0 +1,4 @@
+<option value="">Выберите улицу</option>
+{% for street in streets %}
+<option value="{{ street.pk }}">{{ street.name }}</option>
+{% endfor %}

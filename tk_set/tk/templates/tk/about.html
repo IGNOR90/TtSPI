@@ -1,0 +1,176 @@
+{% extends 'tk/base.html'%}
+
+
+{% block title %}{% if tk.street_only == None %}{{tk.streets}}{% else %}{{tk.street_only}}{% endif %} {{tk.home}} - {{tk.flat}}{% endblock %}
+
+{% block content %}
+
+
+
+    <div class="container">
+
+        <div class="row">
+<div class="col-md-6 col-md-offset-2">
+
+    <h5><b>Информация о заявке: {% if tk.street_only == None %}{{tk.streets}}{% else %}{{tk.street_only}}{% endif %} {{tk.home}} - {{tk.flat}}</b></h5>
+            <table class="table table-hover">
+
+
+                <tr>
+                 <td>Дата :</td> <td><b>{{tk.date|date:"d.m.y"}}</b></td>
+                </tr>
+                <tr>
+                 <td>Вид заявки :</td> <td><b>{{tk.viewticket}}</b></td>
+                </tr>
+
+ <tr>
+                 <td>Статус :</td> <td><b>{{tk.status}}</b></td>
+                </tr>
+                {% if tk.status.id == 2 %}
+                <tr>
+                 <td>Дата обновления:</td> <td><b>{{tk.update|date:"d.m.y"}}</b></td>
+                </tr>
+                {% else %}
+                <tr>
+                 <td>Дата закрытия:</td> <td><b>{{tk.update|date:"d.m.y"}}</b></td>
+                </tr>
+
+                {% endif %}
+                <tr>
+                 <td>Улица:</td> <td><b>{% if tk.street_only == None %}{{tk.streets}}{% else %}{{tk.street_only}}{% endif %}</b></td>
+                </tr>
+
+
+                 <tr>
+                 <td>Дом:</td> <td><b>{{tk.home}}</b></td>
+                </tr>
+                <tr>
+                 <td>Квартира:</td> <td><b>{{tk.flat}}</b></td>
+                </tr>
+                <tr>
+                 <td>Номер телефона:</td> <td><b><a  href="tel:{{tk.phone}}" class="tel">{{tk.phone}}</a></b></td>
+                </tr>
+                <tr>
+                 <td>Логин:</td> <td><b>{{tk.companylogin}}{{tk.logins}}</b></td>
+                </tr>
+                <tr>
+                 <td>Приоритет:</td> <td><b>{{tk.priority}}</b></td>
+                </tr>
+                 <tr>
+                 <td>Оператор:</td> <td><b>{{tk.author.first_name}}</b></td>
+                </tr>
+                 <tr>
+                 <td>Комментарий:</td> <td><b>{{tk.coment}}</b></td>
+                </tr>
+                <tr>
+                 <td>Комментарий мастера:</td> <td><b>{{tk.comment_master}}</b></td>
+                </tr>
+                <tr>
+                 <td>ID TPS:</td> <td><b>{{tk.tps_id}}</b></td>
+                </tr>
+
+</table>
+    <a href="{% url 'update_tk' tk.id %}" class="btn btn-warning"><span class="glyphicon glyphicon-plus"></span>Изменить</a>
+    {% if request.user.is_superuser%}
+    <button class="btn btn-danger" data-toggle="modal" data-target="#exampleModalOrder{{ tk.id }}">Удалить полностью</button>
+    {% endif %}
+
+    <div class="modal fade" id="exampleModalOrder{{ tk.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Удаление {% if tk.street_only == None %}{{tk.streets}}{% else %}{{tk.street_only}}{% endif %} {{tk.home}} - {{tk.flat}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Вы действительно хотите удалить "{% if tk.street_only == None %}{{tk.streets}}{% else %}{{tk.street_only}}{% endif %} {{tk.home}} - {{tk.flat}}" ?</p>
+      </div>
+      <div class="modal-footer">
+
+          <form action="{% url 'delete_tk' tk.id %}" method="POST">
+        {% csrf_token %}
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+        <input type="submit" value="Удалить" class="btn btn-danger">
+
+              </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+
+        </div>
+        </div>
+
+    <div class="container">
+
+        <div class="row">
+        <div class="col-md-8 col-md-offset-1">
+
+
+            <br><br><br><br>
+            <hr>
+            {% for comments in comment %}
+
+            <div class="media bg-default">
+                {% if request.user.is_superuser%}
+                <button type="button" class="close" data-toggle="modal" data-target="#exampleModalOrder{{ comments.id }}"><span>&times;</span></button>
+                <div class="modal fade" id="exampleModalOrder{{ comments.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Удаление комментария</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Вы действительно хотите удалить комментарий"{{ comments.text }}" ?</p>
+      </div>
+      <div class="modal-footer">
+
+          <form action="{% url 'delete_comment' comments.id %}" method="POST">
+        {% csrf_token %}
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+        <input type="submit" value="Удалить" class="btn btn-danger">
+
+              </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+                {% endif %}
+
+  <div class="media-left">
+    {{ comments.date|date:"d.m.y"}}
+  </div>
+  <div class="media-body">
+    <h5 class="media-heading">{{ comments.author }}</h5>
+    <h4>{{ comments.text }}</h4>
+  </div>
+</div>
+<!--            <div class="alert alert-warning alert-dismissible" role="alert">-->
+<!--  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+<!--  {{ comments.text }}-->
+<!--</div>-->
+{% endfor%}
+
+            <h3>Добавить Коммент</h3><br><br>
+        <form action="" method="POST">
+        {% csrf_token %}
+        {{form.as_p}}
+        <input type="submit" class="btn btn-primary" value="Добавить">
+
+        </form>
+</div>
+
+        </div>
+    </div>
+
+{% endblock %}

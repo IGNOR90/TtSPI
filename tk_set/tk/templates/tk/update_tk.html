@@ -1,0 +1,33 @@
+{% extends 'tk/base.html'%}
+
+
+{% block title %}Изменить Тикет{% endblock %}
+
+{% block content %}
+
+
+
+    <div class="container">
+
+        <div class="row">
+        <div class="col-md-8 col-md-offset-1">
+            <h3>Изменить Тикет</h3><br><br>
+       <form method="post" id="testForm" data-streets-url="{% url 'ajax_load_cities' %}" novalidate>
+        {% csrf_token %}
+        {{form.as_p}}
+
+
+
+
+
+        <input type="submit" class="btn btn-warning" value="Изменить">
+            <a href="{% url 'tk_list' %}" class="btn btn-default">Отмена</a>
+</div>
+
+        </div>
+        </form>
+
+    </div>
+
+
+{% endblock %}

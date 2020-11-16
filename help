@@ -1,0 +1,3 @@
+python manage.py runserver
+git config --global user.email "virus902901@gmail.com"
+git config --global user.name "IGNOR90"

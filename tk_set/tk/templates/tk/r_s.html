@@ -1,0 +1,61 @@
+{% extends 'tk/base.html'%}
+
+
+{% block content %}
+
+
+
+    <div class="container">
+
+        <div class="row">
+        <div class="col-md-8 col-md-offset-1">
+            <h3>Проверочная</h3><br><br>
+
+<form method="post" id="testForm" data-streets-url="{% url 'ajax_load_cities' %}" novalidate>
+    {% csrf_token %}
+
+       {{ form.as_table }}
+
+
+<!-- {% for field in form %}-->
+<!--   <div class="form-group">-->
+<!--  <label for="{{ field.id_for_label }}">{{ field.label }}</label>-->
+<!--  {{ field }}-->
+<!--  {% for error in field.errors %}-->
+<!--    <span class="help-block">{{ error }}</span>-->
+<!--  {% endfor %}-->
+<!--   </div>-->
+<!-- {% endfor %}-->
+    <button type="submit" class="btn btn-success">Save</button>
+
+  </form>
+
+
+</div>
+
+        </div>
+
+
+    </div>
+<!--  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>-->
+<!--<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>-->
+
+<!--<script>-->
+<!--    $("#id_regions").change(function () {-->
+<!--      var url = $("#testForm").attr("data-streets-url");-->
+<!--      var regionId = $(this).val();-->
+
+<!--      $.ajax({-->
+<!--        url: url,-->
+<!--        data: {-->
+<!--          'region': regionId-->
+<!--        },-->
+<!--        success: function (data) {-->
+<!--          $("#id_streets").html(data);-->
+<!--        }-->
+<!--      });-->
+
+<!--    });-->
+<!--  </script>-->
+
+{% endblock %}

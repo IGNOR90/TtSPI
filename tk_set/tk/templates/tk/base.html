@@ -1,0 +1,106 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Ticket System{% endblock %}</title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+</head>
+<body>
+
+{% block menu %}
+<nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+<!--                <img src="{% static 'images/logo.png' %}" alt="Spectr It">-->
+                <h4 class="header_logo"><a href="/">Ticket System</a></h4>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                   <li><a href="{% url 'add_tk' %}">Добавить заявку</a></li>
+                    <li><a href="{% url 'tk_list' %}">Заявки</a></li>
+                    <li><a href="{% url 'tk_list_close' %}">Закрытые заявки</a></li>
+
+<!--                    <li class="dropdown">-->
+<!--                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Кабельное ТВ <span class="caret"></span></a>-->
+<!--&lt;!&ndash;                        <ul class="dropdown-menu">&ndash;&gt;-->
+<!--&lt;!&ndash;                            <li><a href="#">Все заявки</a></li>&ndash;&gt;-->
+<!--&lt;!&ndash;                            <li></li>&ndash;&gt;-->
+<!--&lt;!&ndash;                            <li><a href="#">Подключение</a></li>&ndash;&gt;-->
+<!--&lt;!&ndash;                            <li><a href="#">Ремонт</a></li>&ndash;&gt;-->
+<!--&lt;!&ndash;                            <li><a href="#">Отключения</a></li>&ndash;&gt;-->
+<!--&lt;!&ndash;                            <li><a href="#">Архив</a></li>&ndash;&gt;-->
+<!--&lt;!&ndash;                        </ul>&ndash;&gt;-->
+<!--                    </li>-->
+
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{ request.user.first_name }}<span class="caret"></span></a>
+
+
+
+                        <ul class="dropdown-menu">
+                            {% if request.user.is_staff %}
+                            <li><a href="{% url 'add_tk' %}">Добавить заявку</a></li>
+                            <li><a href="{% url 'add_region' %}">Районы</a></li>
+                            <li><a href="{% url 'add_street' %}">Улицы</a></li>
+                            <li role="separator" class="divider"></li>
+
+                            {% endif %}
+                            {% if request.user.is_superuser %}
+                            <li><a href="{% url 'add_user' %}">Пользователи</a></li>
+                            <li><a href="{% url 'add_master' %}">Мастера</a></li>
+                            <li><a href="{% url 'statistic' %}">Статистика</a></li>
+                            <li><a href="#">Логи</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="/admin"> <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span> Войти в админку</a></li>
+
+
+                            {% endif%}
+                            {% if request.user.is_authenticated %}
+                            <li role="separator" class="divider"></li>
+                            <li><a href="{% url 'logout' %}"> <span class="glyphicon glyphicon-lock" aria-hidden="true"></span> Выход</a></li>
+
+
+                            {% endif%}
+                        </ul>
+                    </li>
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+
+{% endblock %}
+
+{% block content %}{% endblock %}
+{% block footer %}
+<div class="footer">
+
+    <p>© Ticket System {% now "Y" %} | Developed by Vlad</p>
+</div>
+
+{% endblock %}
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/main.js' %}"></script>
+
+<script>
+
+  </script>
+
+</body>
+</html>

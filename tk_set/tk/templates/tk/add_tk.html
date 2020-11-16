@@ -1,0 +1,46 @@
+{% extends 'tk/base.html'%}
+
+
+{% block title %}Добавить Тикет{% endblock %}
+
+{% block content %}
+
+
+
+    <div class="container">
+
+        <div class="row">
+        <div class="col-md-8 col-md-offset-1">
+            <h3>Добавить Тикет</h3><br><br>
+        <form method="post" id="testForm" data-streets-url="{% url 'ajax_load_cities' %}" novalidate>
+        {% csrf_token %}
+        {{form.as_p}}
+
+
+
+<!--    {{ form.master }}-->
+<!--    {{ form.viewticket }}-->
+<!--<div class="right"><a href="{% url 'add_region' %}" type="submit" class="btn btn-primary">Добавить район</a></div>-->
+<!--      {{ form.regions }}-->
+<!--<div class="right"><a href="{% url 'add_street' %}" type="submit" class="btn btn-primary">Добавить улицу</a></div>-->
+<!--      {{ form.streets }}-->
+<!--      {{ form.street_only }}-->
+<!--      {{ form.home}}-->
+<!--      {{ form.flat }}-->
+<!--      {{ form.companylogin }}-->
+<!--      {{ form.logins }}-->
+<!--      {{ form.priority }}-->
+<!--      {{ form.comment }}-->
+
+
+
+        <input type="submit" class="btn btn-primary" value="Добавить">
+
+        </form>
+</div>
+
+        </div>
+    </div>
+
+
+{% endblock %}

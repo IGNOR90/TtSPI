@@ -1,0 +1,120 @@
+{% extends 'tk/base.html'%}
+{% load bootstrap %}
+
+{% block title %}Закрытые заявки{% endblock %}
+
+{% block content %}
+
+
+
+<div class="form-filter">
+
+             <h3>Фильтр</h3>
+<form method="get" id="testForm" data-streets-url="{% url 'ajax_load_cities' %}" novalidate>
+
+{{tkFilter.form}}
+{{tkFilter_m.form}}
+        <button type="submit" class="btn btn-primary">Найти</button>
+</form>
+
+
+</div>
+
+<div class="container-fluid">
+<table class="table">
+                    <thead>
+                        <tr>
+
+                            <th>#</th>
+                            <th>Дата</th>
+                            <th>Адрес</th>
+                            <th>Телефон</th>
+                            <th>Логин</th>
+                            <th>Окончание</th>
+                            <th>Автор</th>
+                            <th>Мастер</th>
+                            <th>Статус</th>
+                            <th>Закрыть</th>
+
+                        </tr>
+                    </thead>
+    {% for ticket in tkFilter.qs %}
+                    {% if ticket.priority.id == 3 %}
+    <thead  class="red" >
+    {%  elif ticket.priority.id == 2 %}
+    <thead  class="white">
+{% else %}
+<thead  class="blue">
+{% endif%}
+
+{% if ticket.status.id == 2 %}
+
+{% else %}
+
+
+                        <tr >
+
+                            <th scope="row">{{ticket.id}}</th>
+                            <td>{{ticket.update|date:"d.m.y"}}</td>
+                            <td><a href="{% url 'about' ticket.id %}">{% if ticket.street_only == None %}{{ticket.streets}}{% else %}{{ticket.street_only}}{% endif %} {{ticket.home}}-{{ticket.flat}}</a></td>
+                            <td><a  href="tel:{{ticket.phone}}" class="tel">{{ticket.phone}}</a></td>
+                            <td>{{ticket.companylogin}}{{ticket.logins}}</td>
+                            <td>{{ticket.date|date:"d.m.y"}}</td>
+                            <td>{{ticket.author.first_name}}</td>
+                            <td>{{ticket.master}}</td>
+                            <td>{{ticket.status}}</td>
+
+<!--                            <button type="button" class="btn btn-success">Выполнено</button><button type="button" class="btn btn-warning">Отложить</button><button type="button" class="btn btn-danger">Отказ</button>-->
+
+                            <td>
+                                {% if request.user.is_superuser %}
+                                <a href="{% url 'update_tk' ticket.id %}" class="btn btn-warning" type="button">Изменить</a>
+                            <button class="btn btn-danger" data-toggle="modal" data-target="#exampleModalOrder{{ ticket.id}}">Удалить полностью</button>
+                           {% else  %}
+                                <a href="{% url 'update_tk' ticket.id %}" class="btn btn-warning" type="button">Изменить</a>
+
+
+
+    {% endif %}
+<div class="modal fade" id="exampleModalOrder{{ ticket.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Удаление {% if ticket.street_only == None %}{{ticket.streets}}{% else %}{{ticket.street_only}}{% endif %} {{ticket.home}} - {{ticket.flat}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Вы действительно хотите удалить "{% if ticket.street_only == None %}{{ticket.streets}}{% else %}{{ticket.street_only}}{% endif %} {{ticket.home}} - {{ticket.flat}}" ?</p>
+      </div>
+      <div class="modal-footer">
+
+          <form action="{% url 'delete_tk' ticket.id %}" method="POST">
+        {% csrf_token %}
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+        <input type="submit" value="Удалить" class="btn btn-danger">
+
+              </form>
+      </div>
+    </div>
+  </div>
+</div>
+                            </td>
+
+                        </tr>
+
+{% endif%}
+                    </thead>
+
+    {% endfor%}
+
+
+
+
+
+                </table>
+</div>
+
+
+{% endblock %}

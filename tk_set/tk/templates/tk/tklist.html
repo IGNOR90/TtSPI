@@ -1,0 +1,195 @@
+{% extends 'tk/base.html'%}
+{% load bootstrap %}
+
+{% block title %}Главная{% endblock %}
+
+{% block content %}
+
+<img class="d-block mx-auto mb-4" src="https://spi.uz/wp-content/uploads/2020/04/cropped-logo-3-1-192x192.png" alt="" width="72" height="72">
+
+<h3><span class="label label-success">Заявок: {{ counts }}</span></h3>  <h3><span class="label label-success">Заявок TPS: {{ count_tps }}</span></h3>
+<h3><span class="label label-success">Заявок Spectr: {{ count_sp }}</span></h3>
+<div class="form-filter">
+
+             <h3>Фильтр</h3>
+<!--<form method="get">-->
+<form method="get" id="testForm" data-streets-url="{% url 'ajax_load_cities' %}" novalidate>
+{{tkFilter.form}}
+{{tkFilter_m.form}}
+        <button type="submit" class="btn btn-primary">Найти</button>
+</form>
+
+
+</div>
+<div class="container-fluid">
+<table class="table">
+                    <thead>
+                        <tr>
+
+                            <th>#</th>
+                            <th>Дата</th>
+                            <th>Адрес</th>
+                            <th>Телефон</th>
+                            <th>Логин</th>
+                            <th>Окончание</th>
+                            <th>Автор</th>
+                            <th>Мастер</th>
+                            <th>Вид</th>
+                            <th>Id TPS</th>
+                            <th>Статус</th>
+
+                        </tr>
+                    </thead>
+    {% for ticket in tkFilter_m.qs %}
+                    {% if ticket.priority.id == 3 %}
+    <thead  class="red" >
+    {%  elif ticket.priority.id == 2  %}
+    <thead  class="white">
+{% else %}
+<thead  class="blue">
+{% endif%}
+                        <tr >
+
+                            <th scope="row">{{ticket.id}}</th>
+                            <td>{{ticket.update|date:"d.m.y"}}</td>
+                            <td><a href="{% url 'about' ticket.id %}">{% if ticket.street_only == None %}{{ticket.streets}}{% else %}{{ticket.street_only}}{% endif %} {{ticket.home}}-{{ticket.flat}}</a></td>
+                            <td><a  href="tel:{{ticket.phone}}" class="tel">{{ticket.phone}}</a></td>
+                            <td>{{ticket.companylogin}}{{ticket.logins}}</td>
+                            <td>{{ticket.date|date:"d.m.y"}}</td>
+                            <td>{{ticket.author.first_name}}</td>
+                            <td>{{ticket.master}}</td>
+                            <td>{{ticket.status}}</td>
+                            <td>{{ticket.tps_id}}</td>
+<td><a href="{% url 'close_tk' ticket.id %}" class="btn btn-success" type="button">Закрыть заявку</a>
+<!--                            <button type="button" class="btn btn-success">Выполнено</button><button type="button" class="btn btn-warning">Отложить</button><button type="button" class="btn btn-danger">Отказ</button>-->
+
+ {% if request.user.is_superuser %}
+                            <button class="btn btn-danger" data-toggle="modal" data-target="#exampleModalOrder{{ ticket.id}}">Удалить полностью</button>
+                            {% elif request.user.is_staff %}
+                            <a href="{% url 'update_tk' ticket.id %}" class="btn btn-warning">Изменить</a>
+{% else %}
+
+            <a href="{% url 'edit_tk' ticket.id %}" class="btn btn-warning">Передать мастеру</a>
+
+
+    {% endif %}
+<div class="modal fade" id="exampleModalOrder{{ ticket.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Удаление {% if ticket.street_only == None %}{{ticket.streets}}{% else %}{{ticket.street_only}}{% endif %} {{ticket.home}} - {{ticket.flat}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Вы действительно хотите удалить "{% if ticket.street_only == None %}{{ticket.streets}}{% else %}{{ticket.street_only}}{% endif %} {{ticket.home}} - {{ticket.flat}}" ?</p>
+      </div>
+      <div class="modal-footer">
+
+          <form action="{% url 'delete_tk' ticket.id %}" method="POST">
+        {% csrf_token %}
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+        <input type="submit" value="Удалить" class="btn btn-danger">
+
+              </form>
+      </div>
+    </div>
+  </div>
+</div>
+                            </td>
+
+                        </tr>
+
+                    </thead>
+
+    {% endfor %}
+
+
+
+
+    {% for ticket in tkFilter.qs %}
+
+
+                  {% if ticket.priority.id == 3 %}
+    <thead  class="red" >
+    {%  elif ticket.priority.id == 2  %}
+    <thead  class="white">
+{% else %}
+<thead  class="blue">
+{% endif%}
+                        <tr>
+
+                            <th scope="row">{{ticket.id}}</th>
+                            <td>{{ticket.date|date:"d.m.y"}}</td>
+                            <td><a href="{% url 'about' ticket.id %}">{% if ticket.street_only == None %}{{ticket.streets}}{% else %}{{ticket.street_only}}{% endif %} {{ticket.home}}{% if ticket.flat == None %} 	&nbsp; {% else %}-{{ticket.flat}}{% endif %}</a></td>
+                            <td>{{ticket.phone}}</td>
+                            <td>{{ticket.companylogin}}{% if ticket.logins == None %} 	&nbsp; {% else %}{{ticket.logins}}{% endif %}</td>
+                            <td>{{times}}</td>
+                            <td>{{ticket.author.first_name}}</td>
+                            <td>{{ticket.master}}</td>
+                            <td>{{ticket.status}}</td>
+                            <td>{% if ticket.tps_id == None %} 	&nbsp; {% else %}{{ticket.tps_id}}{% endif %}</td>
+
+<td><a href="{% url 'close_tk' ticket.id %}" class="btn btn-success" type="button">Закрыть заявку</a>
+<!--                      edit_tk      <button type="button" class="btn btn-warning">Отложить</button><button type="button" class="btn btn-danger">Отказ</button>-->
+
+
+                            <a href="{% url 'update_tk' ticket.id %}" class="btn btn-warning">Изменить</a>
+                                {% if request.user.is_superuser%}
+    <button class="btn btn-danger" data-toggle="modal" data-target="#exampleModalOrder{{ ticket.id}}">Удалить полностью</button>
+    {% endif %}
+<div class="modal fade" id="exampleModalOrder{{ ticket.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Удаление {% if ticket.street_only == None %}{{ticket.streets}}{% else %}{{ticket.street_only}}{% endif %} {{ticket.home}} - {{ticket.flat}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Вы действительно хотите удалить "{% if ticket.street_only == None %}{{ticket.streets}}{% else %}{{ticket.street_only}}{% endif %} {{ticket.home}} - {{ticket.flat}}" ?</p>
+      </div>
+      <div class="modal-footer">
+
+          <form action="{% url 'delete_tk' ticket.id %}" method="POST">
+        {% csrf_token %}
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+        <input type="submit" value="Удалить" class="btn btn-danger">
+
+              </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+                            </td>
+
+                        </tr>
+
+                    </thead>
+
+
+    {% endfor%}
+                </table>
+
+{% if request.user.is_superuser or request.user.is_staff %}
+    &nbsp;
+    {% else%}
+<a href="{% url 'ticket_export_csv' %}" class="btn btn-default">Получить Тикеты</a>
+<br>
+    {% endif %}
+<div class="info">
+<div class="blue" style="width: 10px; height: 10px; margin:5px 10px;"></div>Корп
+<div class="red" style="width: 10px; height: 10px; margin:5px 10px;"></div>Срочно
+
+</div>
+<br>
+
+</div>
+
+
+
+
+{% endblock %}
